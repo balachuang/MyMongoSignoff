@@ -1,0 +1,29 @@
+server:
+  port: 9090
+
+logging:
+  level:
+    root: info
+    bala.retention: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file.name: logs/retension-demo.log
+
+spring:
+  application:
+    name: Retention
+  # data:
+  mongodb:
+    uri: mongodb://bala:pass@localhost:27017/demo?authSource=admin
+    # # uri: mongodb://root:pass@localhost:27017/demo?authSource=admin
+    # uri: mongodb://root:pass@localhost:27017/admin?authSource=admin
+
+      # uri: mongodb://bala:pass@localhost:27017/demo?authSource=admin # (Optional) A full connection URI, overrides host, port, database, username, and password if present
+      # host: localhost # The MongoDB server host (e.g., localhost, IP address)
+      # port: 27017 # The MongoDB server port (default is 27017)
+      # database: demo # The name of the database to connect to
+      # username: bala # (Optional) Username for authentication
+      # password: pass # (Optional) Password for authentication
+      # authentication-database: admin # (Optional) The database to authenticate against (if different from 'database')
+      # auto-index-creation: true

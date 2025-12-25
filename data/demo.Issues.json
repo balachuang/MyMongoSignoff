@@ -1,0 +1,56 @@
+[{
+  "_id": {
+    "$oid": "694cf09ecd64de7891446ce8"
+  },
+  "key": "EAR-1",
+  "project": "EAR",
+  "title": "ear issue 01",
+  "creater": "zjchuang",
+  "assignee": "zjchuang",
+  "status": "SECT",
+  "createdate": {
+    "$date": "2025-11-30T16:00:00.000Z"
+  },
+  "issuetype": "EAR",
+  "updatedate": {
+    "$date": "2025-12-09T16:00:00.000Z"
+  },
+  "customfields": [
+    {
+      "key": "FAB",
+      "value": "F12A"
+    },
+    {
+      "key": "YEAR",
+      "value": "2025"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "694cf09ecd64de7891446ce9"
+  },
+  "key": "EAR-2",
+  "project": "EAR",
+  "title": "prevention issue 01",
+  "creater": "zjchuang",
+  "status": "SECT",
+  "issuetype": "PREVENTION",
+  "customfields": [
+    {
+      "key": "FAB",
+      "value": "F12A"
+    },
+    {
+      "key": "MODULE",
+      "value": "DIF"
+    }
+  ],
+  "assignee": "zjchuang",
+  "createdate": {
+    "$date": "2025-12-01T02:11:12.000Z"
+  },
+  "updatedate": {
+    "$date": "2025-12-02T03:12:13.000Z"
+  }
+}]

@@ -1,0 +1,207 @@
+[{
+  "_id": {
+    "$oid": "694d280acd64de7891446cf1"
+  },
+  "key": "EAR",
+  "name": "Demo Project of EAR",
+  "creater": "zjchuang",
+  "permissions": [
+    {
+      "role": "Admin",
+      "members": [
+        "zjchuang"
+      ],
+      "groups": [
+        "00302105"
+      ]
+    },
+    {
+      "role": "Creater",
+      "members": [
+        "usera"
+      ]
+    },
+    {
+      "role": "Editor",
+      "groups": [
+        "11223344"
+      ]
+    },
+    {
+      "role": "Viewer",
+      "groups": [
+        "00100000"
+      ]
+    }
+  ],
+  "createdate": {
+    "$date": "2025-11-30T16:00:00.000Z"
+  },
+  "issuetypes": [
+    {
+      "key": "EAR",
+      "name": "EAR",
+      "workflow": {
+        "status": [
+          {
+            "key": "SECT",
+            "name": "Section Approving"
+          },
+          {
+            "key": "MNGR",
+            "name": "Manager Approving"
+          },
+          {
+            "key": "WAIT",
+            "name": "Wait Prevention Close"
+          }
+        ],
+        "actions": [
+          {
+            "name": "Approve",
+            "PostAction": [],
+            "from": "SECT",
+            "to": "MNGR"
+          },
+          {
+            "name": "Done",
+            "PostAction": [],
+            "from": "MNGR",
+            "to": "WAIT"
+          }
+        ]
+      },
+      "customfields": [
+        {
+          "key": "FAB",
+          "name": "EAR Fab",
+          "type": "String"
+        },
+        {
+          "key": "YEAR",
+          "name": "EAR Year",
+          "type": "Number"
+        },
+        {
+          "key": "TOOLID",
+          "name": "Tool ID",
+          "type": "String"
+        },
+        {
+          "key": "SPONSOR",
+          "name": "EAR Sponsor",
+          "type": "UserPicker"
+        }
+      ]
+    },
+    {
+      "key": "PREVENTION",
+      "name": "Prevention",
+      "customfields": [
+        {
+          "key": "FAB",
+          "name": "Prevention Fab",
+          "type": "String"
+        },
+        {
+          "key": "MODULE",
+          "name": "Prevention Module",
+          "type": "String"
+        },
+        {
+          "key": "SPONSOR",
+          "name": "Prevention Sponsor",
+          "type": "UserPicker"
+        }
+      ],
+      "workflow": {
+        "status": [
+          {
+            "key": "SECT",
+            "name": "Section Approving"
+          },
+          {
+            "key": "MNGR",
+            "name": "Manager Approving"
+          },
+          {
+            "key": "CLOSE",
+            "name": "Close"
+          }
+        ],
+        "actions": [
+          {
+            "name": "Approve",
+            "PostAction": [],
+            "from": "SECT",
+            "to": "MNGR"
+          },
+          {
+            "name": "Close",
+            "PostAction": [],
+            "from": "MNGR",
+            "to": "CLOSE"
+          }
+        ]
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "694d280acd64de7891446cf2"
+  },
+  "key": "BKMP",
+  "name": "My Test BKMP",
+  "creater": "zjchuang",
+  "permissions": [
+    {
+      "role": "Admin",
+      "members": [
+        "zjchuang"
+      ]
+    },
+    {
+      "role": "Viewer",
+      "groups": [
+        "00F00000"
+      ]
+    }
+  ],
+  "createdate": {
+    "$date": "2025-12-01T16:00:00.000Z"
+  },
+  "issuetypes": [
+    {
+      "name": "Initial",
+      "key": "INIT",
+      "customfields": [
+        {
+          "key": "BKMID",
+          "name": "BKM ID",
+          "type": "String"
+        }
+      ],
+      "workflow": {
+        "status": [
+          {
+            "key": "START",
+            "name": "Start"
+          },
+          {
+            "key": "END",
+            "name": "End"
+          }
+        ],
+        "actions": [
+          {
+            "name": "OK",
+            "PostAction": [],
+            "from": "START",
+            "to": "END"
+          }
+        ]
+      }
+    }
+  ]
+}]
