@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableAutoConfiguration
 @SpringBootApplication
-@ComponentScan( basePackages = {"bala.retension"})
+@ComponentScan( basePackages = {"bala.signoff"})
 public class SignoffApplication
 {
 	public static void main(String[] args) {

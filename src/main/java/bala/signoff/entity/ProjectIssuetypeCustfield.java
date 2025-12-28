@@ -14,4 +14,9 @@ public class ProjectIssuetypeCustfield
 	@NonNull private String key;
 	@NonNull private String name;
 	@NonNull private String type;
+
+	static public ProjectIssuetypeCustfield createDefault()
+	{
+		return new ProjectIssuetypeCustfield("CUST", "Custom Field", "String");
+	}
 }

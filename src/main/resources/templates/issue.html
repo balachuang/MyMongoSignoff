@@ -14,11 +14,19 @@
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#">My Sign-Off</a>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<nav class="nav-link" style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+				<nav class="nav-link" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 					<ol class="breadcrumb" style="--bs-breadcrumb-margin-bottom:0rem; padding-left:1rem;">
-						<li class="breadcrumb-item" aria-current="page">
+						<li class="breadcrumb-item">
 							<i class="bi bi-house-fill"></i>&nbsp;
-							<a href="#">Home</a>
+							<a href="/MySignoff/home">Home</a>
+						</li>
+						<li class="breadcrumb-item active" aria-current="page">
+							<i class="bi bi-briefcase-fill"></i>&nbsp;
+							<a th:href="@{'/MySignoff/project/' + ${project?.key}}" th:text="${project?.name}">Project</a>
+						</li>
+						<li class="breadcrumb-item active" aria-current="page">
+							<i class="bi bi-file-earmark-ruled"></i>&nbsp;
+							<span th:text="${issue?.title}">Title</span>
 						</li>
 					</ol>
 				</nav>
@@ -28,30 +36,18 @@
 	<table class="table table-condensed">
 		<thead>
 			<tr>
-				<th scope="col">#</th>
-				<th scope="col">Key</th>
-				<th scope="col">Project</th>
-				<th scope="col">Issue Types</th>
-				<th scope="col">Administrators</th>
+				<th scope="col">Field</th>
+				<th scope="col">Value</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="project, status : ${projects}">
-				<td scope="row" th:text="${(status.index+1)}">#</td>
-				<td scope="col" th:text="${project.key}">Key</td>
-				<td scope="col">
-					<a th:href="@{'/MySignoff/project/' + ${project.key}}" th:text="${project.name}">Name</a>
-				</td>
-				<td scope="col" class="text-left">
-					<th:block th:each="issueType : ${project.issuetypes}">
-						<button type="button" class="btn btn-link" th:text="${issueType.name}">issuetype</button>
-					</th:block>
-				</td>
-				<td scope="col" class="text-left">
-					<th:block th:each="admin : ${project.permissions.admin.members}">
-						<button type="button" class="btn btn-link" th:text="${admin}">admin</button>
-					</th:block>
-				</td>
+			<tr>
+				<td scope="col">Key</td>
+				<td scope="col" th:text="${issue?.key}">Key</td>
+			</tr>
+			<tr>
+				<td scope="col">Title</td>
+				<td scope="col" th:text="${issue?.title}">Title</td>
 			</tr>
 		</tbody>
 	</table>

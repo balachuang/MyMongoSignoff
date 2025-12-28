@@ -1,5 +1,6 @@
 package bala.signoff.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.mongodb.lang.NonNull;
 import lombok.AllArgsConstructor;
@@ -17,4 +18,16 @@ public class ProjectIssuetype
 
 	@NonNull private ProjectIssuetypeWorkflow workflow;
 	@NonNull private List<ProjectIssuetypeCustfield> customfields;
+
+	static public ProjectIssuetype createDefault()
+	{
+		ProjectIssuetypeWorkflow defaultWorkflow = ProjectIssuetypeWorkflow.createDefault();
+
+		ProjectIssuetypeCustfield defaultCustfield = ProjectIssuetypeCustfield.createDefault();
+		ArrayList<ProjectIssuetypeCustfield> defaultCustfields = new ArrayList<>();
+		defaultCustfields.add(defaultCustfield);
+
+		ProjectIssuetype defaultIssueType = new ProjectIssuetype("ISSUETYPE", "Issue Type", defaultWorkflow, defaultCustfields);
+		return defaultIssueType;
+	}
 }

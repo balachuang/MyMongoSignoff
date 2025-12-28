@@ -1,10 +1,10 @@
+# MongoDB
+
 ## ref:
 https://ithelp.ithome.com.tw/articles/10366353
 https://ithelp.ithome.com.tw/articles/10365958
 https://hackmd.io/@SuFrank/BJOe3Fi3c
 https://medium.com/@ananimziv/%E6%A1%86%E6%9E%B6-springboot%E5%92%8Cmongodb%E7%9A%84%E5%AF%A6%E4%BD%9C-f1575e1e0a8d
-
-
 
 ## pull latest MongoDb image
 docker pull mongo:latest
@@ -32,7 +32,7 @@ db.updateUser("bala", {roles: [{role:"readWrite",db:"demo"}, {role:"readWrite",d
 
 用 MongoDB Compass 連線, 下載回來是 exe 檔, 直接執行即可.
 
-
+## problems
 上面的步驟都沒問題, 有成功建出 DB 和 user, 也可以用建出來的 user 連 DB 加資料.
 但是不知為什麼用 spring boot 連任都失敗. 失敗原因是認証失敗.
 ==> 找到原因了, 原來 spring boot 4 之後, mongodb 的 config 在 spring.mongodb 下, 而不是 spring.data.mongodb
@@ -41,6 +41,7 @@ db.updateUser("bala", {roles: [{role:"readWrite",db:"demo"}, {role:"readWrite",d
 ==> 結果是大小寫問題, DB 裡是用大寫, java 裡就要用大寫, 不然就是要另外寫 mapping
 ==> MongoDB 的 field name 用 底線 好像不行, 之後再找解法.
 
+## remark
 db.version()
 8.2.2
 
@@ -61,3 +62,16 @@ db.version
 }
 
 
+# Thymeleaf
+
+## ref:
+https://ithelp.ithome.com.tw/articles/10301576
+
+
+# HTMX
+
+## ref:
+https://bootify.io/frontend/htmx-with-spring-boot-thymeleaf.html
+https://htmx.org/
+
+呼叫 controller 並取得 Thymeleaf fragement 並取代頁面元件, 做出如同 SPA (Single-Page Application) 的動態網站.

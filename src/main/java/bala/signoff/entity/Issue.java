@@ -20,7 +20,7 @@ public class Issue
 	@NonNull private String project;
 	@NonNull private String issuetype;
 	@NonNull private String title;
-	@NonNull private String creater;
+	@NonNull private String creator;
 	@NonNull private LocalDateTime createdate;
 	@NonNull private LocalDateTime updatedate;
 	@NonNull private String assignee;
