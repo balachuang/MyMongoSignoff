@@ -1,8 +1,12 @@
 package bala.signoff.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.mongodb.lang.NonNull;
+import com.mongodb.lang.Nullable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -25,4 +29,6 @@ public class Issue
 	@NonNull private LocalDateTime updatedate;
 	@NonNull private String assignee;
 	@NonNull private String status;
+
+	@Nullable private List<IssueCustfield> customfields;
 }

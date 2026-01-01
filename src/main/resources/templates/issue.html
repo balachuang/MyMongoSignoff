@@ -9,47 +9,85 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
 </head>
-<body data-bs-theme="dark">
-	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<body class="container-xxl" data-bs-theme="dark">
+		<nav class="navbar navbar-expand-lg bg-body-tertiary">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#">My Sign-Off</a>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<nav class="nav-link" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+						<ol class="breadcrumb" style="--bs-breadcrumb-margin-bottom:0rem; padding-left:1rem;">
+							<li class="breadcrumb-item">
+								<i class="bi bi-house-fill"></i>&nbsp;
+								<a href="/MySignoff/home">Home</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">
+								<i class="bi bi-briefcase-fill"></i>&nbsp;
+								<a th:href="@{'/MySignoff/project/' + ${project?.key}}" th:text="${project?.name}">Project</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">
+								<i class="bi bi-file-earmark-ruled"></i>&nbsp;
+								[<span th:text="${issue?.key}">Key</span>]&nbsp;
+								<span th:text="${issue?.title}">Title</span>
+							</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+		</nav>
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#">My Sign-Off</a>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<nav class="nav-link" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-					<ol class="breadcrumb" style="--bs-breadcrumb-margin-bottom:0rem; padding-left:1rem;">
-						<li class="breadcrumb-item">
-							<i class="bi bi-house-fill"></i>&nbsp;
-							<a href="/MySignoff/home">Home</a>
-						</li>
-						<li class="breadcrumb-item active" aria-current="page">
-							<i class="bi bi-briefcase-fill"></i>&nbsp;
-							<a th:href="@{'/MySignoff/project/' + ${project?.key}}" th:text="${project?.name}">Project</a>
-						</li>
-						<li class="breadcrumb-item active" aria-current="page">
-							<i class="bi bi-file-earmark-ruled"></i>&nbsp;
-							<span th:text="${issue?.title}">Title</span>
-						</li>
-					</ol>
-				</nav>
+			<div class="row text-start">
+				<div class="col">
+					<h1 class="display-6" style="line-height:2;" th:text="${issue?.title}">Title</h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-9">
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th scope="col" class="col-2">Field Name</th>
+								<th scope="col" class="col-10">Field Value</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="cust : ${cfvalues}">
+								<td scope="col" class="col-2"  th:text="${cust?.name}">Cust Field Name</td>
+								<td scope="col" class="col-10" th:text="${cust?.value}">Cust Field Value</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-3">
+					<table class="table table-condensed">
+						<tbody>
+							<tr>
+								<td>Type</td>
+								<td th:text="${issue?.issuetype}">Type</td>
+							</tr>
+							<tr>
+								<td>Status</td>
+								<td th:text="${issue?.status}">Status</td>
+							</tr>
+							<tr>
+								<td>Assignee</td>
+								<td th:text="${issue?.assignee}">Assignee</td>
+							</tr>
+							<tr>
+								<td>Creator</td>
+								<td th:text="${issue?.creator}">Creator</td>
+							</tr>
+							<tr>
+								<td>Create Date</td>
+								<td th:text="${issue?.createdate}">Create Date</td>
+							</tr>
+							<tr>
+								<td>Update Date</td>
+								<td th:text="${issue?.updatedate}">Update Date</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
-	</nav>
-	<table class="table table-condensed">
-		<thead>
-			<tr>
-				<th scope="col">Field</th>
-				<th scope="col">Value</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td scope="col">Key</td>
-				<td scope="col" th:text="${issue?.key}">Key</td>
-			</tr>
-			<tr>
-				<td scope="col">Title</td>
-				<td scope="col" th:text="${issue?.title}">Title</td>
-			</tr>
-		</tbody>
-	</table>
 </body>
 </html>

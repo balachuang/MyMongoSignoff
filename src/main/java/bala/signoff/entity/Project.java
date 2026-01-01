@@ -41,4 +41,13 @@ public class Project
 		Project defaultProject = new Project(key, name, creator, LocalDateTime.now(), defaultIssuetypes, defaultPermission);
 		return defaultProject;
 	}
+
+	public ProjectIssuetype getIssueTypeByKey(String key)
+	{
+		for (ProjectIssuetype issType : this.issuetypes) {
+			if (issType.getKey().equals(key)) return issType;
+		}
+
+		return null;
+	}
 }

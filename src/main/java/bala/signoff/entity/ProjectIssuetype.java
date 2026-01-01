@@ -30,4 +30,13 @@ public class ProjectIssuetype
 		ProjectIssuetype defaultIssueType = new ProjectIssuetype("ISSUETYPE", "Issue Type", defaultWorkflow, defaultCustfields);
 		return defaultIssueType;
 	}
+
+	public ProjectIssuetypeCustfield getCustFieldByKey(String key)
+	{
+		for (ProjectIssuetypeCustfield custField : this.customfields) {
+			if (custField.getKey().equals(key)) return custField;
+		}
+
+		return null;
+	}
 }

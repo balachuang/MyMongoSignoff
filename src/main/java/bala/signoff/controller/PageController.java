@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import bala.signoff.entity.Issue;
+import bala.signoff.entity.IssueCustfield;
+import bala.signoff.entity.IssueCustfieldDisplay;
 import bala.signoff.entity.Project;
+import bala.signoff.entity.ProjectIssuetype;
+import bala.signoff.entity.ProjectIssuetypeCustfield;
 import bala.signoff.entity.User;
 import bala.signoff.repository.IssueRepo;
 import bala.signoff.repository.ProjectRepo;
@@ -70,14 +74,35 @@ public class PageController
 	{
 		User user = PermissionService.getCurrentLoginUser();
 
+		// get issue
 		Issue issue = issuesDao.findIssueByKey(key).orElse(null);
 		if (issue == null) return "error";
 
+		// get project
 		Project project = projectDao.findProjectByKey(issue.getProject()).orElse(null);
 		if (!user.canBeViewerOf(project)) return "error";
 
+		// generate cust. field display by name/value
+		ProjectIssuetype thisIssueType = project.getIssueTypeByKey(issue.getIssuetype());
+		if (thisIssueType == null) {
+			logger.error("ERROR: Issue Type not in Project !!!");
+			return "error";
+		}
+
+		ArrayList<IssueCustfieldDisplay> custFielValues = new ArrayList<>();
+		for(IssueCustfield cust : issue.getCustomfields())
+		{
+			ProjectIssuetypeCustfield cfInfo = thisIssueType.getCustFieldByKey(cust.getKey());
+			if (cfInfo == null) {
+				logger.error("ERROR: Custom Field not in Issue Type !!!");
+				return "error";
+			}
+			custFielValues.add(new IssueCustfieldDisplay(cfInfo.getName(), cust.getValue()));
+		}
+
 		model.addAttribute("project", project);
 		model.addAttribute("issue", issue);
+		model.addAttribute("cfvalues", custFielValues);
 		return "issue";
 	}
 
