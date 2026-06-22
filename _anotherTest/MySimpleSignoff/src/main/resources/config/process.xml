@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<approval-process>
+    <step id="OPEN" label="Open" assignee="creator">
+        <action id="SEND_FOR_APPROVAL" target="APPROVING" />
+    </step>
+    <step id="APPROVING" label="Approving" assignee="signoff_person">
+        <action id="ACCEPT" target="APPROVING" />
+        <action id="REJECT" target="REJECT" />
+    </step>
+    <step id="ACCEPT" label="Accept" assignee="creator">
+        <action id="DONE" target="CLOSE" />
+        <action id="RE_OPEN" target="OPEN" />
+    </step>
+    <step id="REJECT" label="Reject" assignee="creator">
+        <action id="DONE" target="CLOSE" />
+        <action id="RE_OPEN" target="OPEN" />
+    </step>
+    <step id="CLOSE" label="Close" assignee="creator">
+    </step>
+</approval-process>

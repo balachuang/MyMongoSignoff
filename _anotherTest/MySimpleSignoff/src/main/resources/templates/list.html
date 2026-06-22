@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Approval List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <h2>Approval Requests</h2>
+    <a href="/form/new" class="btn btn-primary mb-3">Create New Request</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Step</th>
+                <th>Assignee</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="requestList">
+            <!-- Data will be loaded here via JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        async function loadRequests() {
+            try {
+                const response = await fetch('/api/approvals');
+                if (response.ok) {
+                    const result = await response.json();
+                    const requests = result.data;
+                    const tbody = document.getElementById('requestList');
+                    tbody.innerHTML = '';
+
+                    requests.forEach(req => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${req.id}</td>
+                            <td>${req.title}</td>
+                            <td>${req.currentStep}</td>
+                            <td>${req.assigneeName || req.assigneeId}</td>
+                            <td>${req.createDate}</td>
+                            <td><a href="/detail/${req.id}" class="btn btn-sm btn-info">View</a></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    console.error('Failed to load requests');
+                }
+            } catch (error) {
+                console.error('Error loading requests:', error);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadRequests);
+    </script>
+</body>
+</html>

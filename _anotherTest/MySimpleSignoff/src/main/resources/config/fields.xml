@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<approval-fields>
+    <field id="title" label="Title" type="text" required="true" />
+    <field id="signoffPersons" label="Signoff Persons" type="text" required="true" />
+    <field id="mainCategory" label="Main Category" type="dropdown" required="true">
+        <option value="IT">IT</option>
+        <option value="HR">HR</option>
+        <option value="FIN">Finance</option>
+    </field>
+    <field id="subCategory" label="Sub Category" type="dropdown" required="true">
+        <main-category value="IT">
+            <option value="HARDWARE">Hardware</option>
+            <option value="SOFTWARE">Software</option>
+        </main-category>
+        <main-category value="HR">
+            <option value="LEAVE">Leave</option>
+            <option value="BENEFIT">Benefit</option>
+        </main-category>
+        <main-category value="FIN">
+            <option value="EXPENSE">Expense</option>
+            <option value="BUDGET">Budget</option>
+        </main-category>
+    </field>
+    <field id="content" label="Content" type="rich-text" required="true" />
+</approval-fields>

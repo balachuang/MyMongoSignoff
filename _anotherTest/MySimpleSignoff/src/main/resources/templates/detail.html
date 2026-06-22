@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Approval Detail</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <h2>Request Detail</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 id="reqTitle">Loading...</h4>
+            <p><strong>Step:</strong> <span id="reqStep"></span></p>
+            <p><strong>Assignee ID:</strong> <span id="reqAssignee"></span></p>
+            <p><strong>Content:</strong> <span id="reqContent"></span></p>
+            <p><strong>Signoff Persons:</strong> <span id="reqPersons"></span></p>
+        </div>
+    </div>
+
+    <div id="actionSection" class="mb-4">
+        <h4>Actions</h4>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <input type="text" id="actionComment" class="form-control" placeholder="Comment">
+            </div>
+            <div class="col-auto">
+                <button id="btnSend" onclick="executeAction('SEND_FOR_APPROVAL')" class="btn btn-outline-primary">Send for Approval</button>
+                <button id="btnAccept" onclick="executeAction('ACCEPT')" class="btn btn-success">Accept</button>
+                <button id="btnReject" onclick="executeAction('REJECT')" class="btn btn-danger">Reject</button>
+                <button id="btnReopen" onclick="executeAction('RE_OPEN')" class="btn btn-secondary">Re-Open</button>
+            </div>
+        </div>
+    </div>
+
+    <h4>Change History</h4>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Old Value</th>
+                <th>New Value</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody id="logList">
+            <!-- Logs will be loaded here -->
+        </tbody>
+    </table>
+    <a href="/" class="btn btn-secondary">Back to List</a>
+
+    <script>
+        const requestId = window.location.pathname.split('/').pop();
+
+        async function loadDetail() {
+            try {
+                const response = await fetch(`/api/approvals/${requestId}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    const data = result.data;
+                    const request = data.request;
+                    const logs = data.logs;
+                    const isCurrentAssignee = data.isCurrentAssignee;
+
+                    document.getElementById('reqTitle').textContent = request.title;
+                    document.getElementById('reqStep').textContent = request.currentStep;
+                    document.getElementById('reqAssignee').textContent = request.assigneeName || request.assigneeId;
+                    document.getElementById('reqContent').textContent = request.content;
+                    document.getElementById('reqPersons').textContent = request.signoffPersons;
+
+                    // Hide actions if not the current assignee
+                    document.getElementById('actionSection').style.display = isCurrentAssignee ? 'block' : 'none';
+
+                    if (isCurrentAssignee) {
+                        const step = request.currentStep;
+                        document.getElementById('btnSend').style.display = (step === 'OPEN') ? 'inline-block' : 'none';
+                        document.getElementById('btnAccept').style.display = (step === 'APPROVING') ? 'inline-block' : 'none';
+                        document.getElementById('btnReject').style.display = (step === 'APPROVING') ? 'inline-block' : 'none';
+                        document.getElementById('btnReopen').style.display = ((step === 'ACCEPT' || step === 'REJECT') ? 'inline-block' : 'none');
+                    }
+
+                    const logTbody = document.getElementById('logList');
+                    logTbody.innerHTML = '';
+                    logs.forEach(log => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${log.fieldName}</td>
+                            <td>${log.oldValue}</td>
+                            <td>${log.newValue}</td>
+                            <td>${log.changeDate}</td>
+                        `;
+                        logTbody.appendChild(tr);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading detail:', error);
+            }
+        }
+
+        async function executeAction(action) {
+            const comment = document.getElementById('actionComment').value;
+
+            try {
+                const response = await fetch(`/api/approvals/${requestId}/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action, comment })
+                });
+
+                if (response.ok) {
+                    alert('Action executed successfully');
+                    await loadDetail();
+                } else {
+                    const errorData = await response.json();
+                    alert('Action failed: ' + (errorData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error executing action:', error);
+                alert('An unexpected error occurred.');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadDetail);
+    </script>
+</body>
+</html>
