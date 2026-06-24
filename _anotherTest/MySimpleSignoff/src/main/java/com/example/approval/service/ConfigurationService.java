@@ -18,10 +18,20 @@ import java.util.*;
 public class ConfigurationService {
     private final List<FieldConfig> fields = new ArrayList<>();
     private final Map<String, String> processTransitions = new HashMap<>();
+    private final Map<String, StepConfig> steps = new HashMap<>();
+
+    @Data
+    @AllArgsConstructor
+    public static class StepConfig {
+        private String id;
+        private String label;
+        private String assignee;
+    }
 
     @Data
     @AllArgsConstructor
     public static class FieldConfig {
+
         private String id;
         private String label;
         private String type;
@@ -100,6 +110,11 @@ public class ConfigurationService {
             for (int i = 0; i < stepNodes.getLength(); i++) {
                 Element step = (Element) stepNodes.item(i);
                 String stepId = step.getAttribute("id");
+                String label = step.getAttribute("label");
+                String assignee = step.getAttribute("assignee");
+
+                steps.put(stepId, new StepConfig(stepId, label, assignee));
+
                 NodeList actionNodes = step.getElementsByTagName("action");
                 for (int j = 0; j < actionNodes.getLength(); j++) {
                     Element action = (Element) actionNodes.item(j);
@@ -115,6 +130,10 @@ public class ConfigurationService {
 
     public String getNextStep(String currentStep, String action) {
         return processTransitions.get(currentStep + ":" + action);
+    }
+
+    public StepConfig getStepConfig(String stepId) {
+        return steps.get(stepId);
     }
 
     public List<FieldConfig> getFields() {

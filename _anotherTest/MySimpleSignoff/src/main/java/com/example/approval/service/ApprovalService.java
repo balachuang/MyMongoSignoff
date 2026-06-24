@@ -20,6 +20,7 @@ public class ApprovalService {
     private final UserRepository userRepository;
     private final ConfigurationService configService;
     private final LogService logService;
+    private final AssigneeResolver assigneeResolver;
 
     public ApprovalRequest createRequest(ApprovalRequest request, User creator) {
         request.setCreatorId(creator.getId());
@@ -38,15 +39,11 @@ public class ApprovalService {
 
         ApprovalRequest oldState = cloneRequest(request);
 
-        String nextStep = configService.getNextStep("OPEN", "SEND_FOR_APPROVAL");
-        request.setCurrentStep(nextStep);
+        String nextStepId = configService.getNextStep("OPEN", "SEND_FOR_APPROVAL");
+        ConfigurationService.StepConfig stepConfig = configService.getStepConfig(nextStepId);
 
-        // Set first signoff person as assignee
-        String firstPerson = getFirstSignoffPerson(request.getSignoffPersons());
-        User assignee = userRepository.findByUsername(firstPerson)
-            .orElseThrow(() -> new RuntimeException("Signoff person not found: " + firstPerson));
-
-        request.setAssigneeId(assignee.getId());
+        request.setCurrentStep(nextStepId);
+        request.setAssigneeId(assigneeResolver.resolveAssignee(stepConfig, request, "SEND_FOR_APPROVAL"));
 
         ApprovalRequest saved = requestRepository.save(request);
         logService.logChanges(oldState, saved, operator.getId());
@@ -64,96 +61,31 @@ public class ApprovalService {
 
         ApprovalRequest oldState = cloneRequest(request);
 
-        // Use the action specifically to determine the next step
-        String nextStep = configService.getNextStep(request.getCurrentStep(), action);
+        String currentStep = request.getCurrentStep();
+        String nextStepId = configService.getNextStep(currentStep, action);
 
-        if (nextStep == null) {
-            throw new RuntimeException("Invalid action " + action + " for step " + request.getCurrentStep());
+        if (nextStepId == null) {
+            throw new RuntimeException("Invalid action " + action + " for step " + currentStep);
         }
 
-        // Store the old step for later use if needed, then update to next
-        String previousStep = request.getCurrentStep();
-        request.setCurrentStep(nextStep);
+        ConfigurationService.StepConfig nextStepConfig = configService.getStepConfig(nextStepId);
+        Long nextAssigneeId = assigneeResolver.resolveAssignee(nextStepConfig, request, action);
 
-        if ("SEND_FOR_APPROVAL".equals(action)) {
-            String firstPerson = getFirstSignoffPerson(request.getSignoffPersons());
-            User assignee = userRepository.findByUsername(firstPerson)
-                .orElseThrow(() -> new RuntimeException("Signoff person not found: " + firstPerson));
-            request.setAssigneeId(assignee.getId());
-        } else if ("ACCEPT".equals(action)) {
-            handleAccept(request);
-        } else if ("REJECT".equals(action)) {
-            handleReject(request);
-        } else if ("RE_OPEN".equals(action)) {
-            handleReOpen(request);
+        // Special case: Loop exhaustion for signoff persons
+        if (nextAssigneeId == null && "APPROVING".equals(nextStepId)) {
+            // The target was APPROVING but no more people left.
+            // Move to the completion step (ACCEPT)
+            nextStepId = "ACCEPT";
+            nextStepConfig = configService.getStepConfig(nextStepId);
+            nextAssigneeId = assigneeResolver.resolveAssignee(nextStepConfig, request, action);
         }
+
+        request.setCurrentStep(nextStepId);
+        request.setAssigneeId(nextAssigneeId);
 
         ApprovalRequest saved = requestRepository.save(request);
         logService.logChanges(oldState, saved, operator.getId());
         return saved;
-    }
-
-    private void handleAccept(ApprovalRequest request) {
-        String persons = request.getSignoffPersons();
-        if (persons == null || persons.isEmpty()) {
-            throw new RuntimeException("No signoff persons configured for this request");
-        }
-
-        String[] split = persons.split(",");
-        String currentAssigneeName = userRepository.findById(request.getAssigneeId())
-            .map(User::getUsername).orElse("");
-
-        int currentIndex = -1;
-        for (int i = 0; i < split.length; i++) {
-            if (split[i].trim().equalsIgnoreCase(currentAssigneeName)) {
-                currentIndex = i;
-                break;
-            }
-        }
-
-        if (currentIndex < split.length - 1 && currentIndex != -1) {
-            // Case: Current assignee found in list, and there are more people to approve
-            String nextPersonName = split[currentIndex + 1].trim();
-            User nextPerson = userRepository.findByUsername(nextPersonName)
-                .orElseThrow(() -> new RuntimeException("Next signoff person not found: " + nextPersonName));
-            request.setAssigneeId(nextPerson.getId());
-            request.setCurrentStep("APPROVING");
-        } else if (currentIndex == -1) {
-            // Case: Current assignee not found in list (e.g., Creator just approved)
-            // Move to the first person in the list
-            String firstPersonName = split[0].trim();
-            User firstPerson = userRepository.findByUsername(firstPersonName)
-                .orElseThrow(() -> new RuntimeException("First signoff person not found: " + firstPersonName));
-            request.setAssigneeId(firstPerson.getId());
-            request.setCurrentStep("APPROVING");
-        } else {
-            // Case: Last person in the list approved
-            request.setCurrentStep("ACCEPT");
-            User creator = userRepository.findById(request.getCreatorId())
-                .orElseThrow(() -> new RuntimeException("Creator not found"));
-            request.setAssigneeId(creator.getId());
-        }
-    }
-
-    private void handleReject(ApprovalRequest request) {
-        request.setCurrentStep("REJECT");
-        User creator = userRepository.findById(request.getCreatorId())
-            .orElseThrow(() -> new RuntimeException("Creator not found"));
-        request.setAssigneeId(creator.getId());
-    }
-
-    private void handleReOpen(ApprovalRequest request) {
-        request.setCurrentStep("OPEN");
-        User creator = userRepository.findById(request.getCreatorId())
-            .orElseThrow(() -> new RuntimeException("Creator not found"));
-        request.setAssigneeId(creator.getId());
-    }
-
-    private String getFirstSignoffPerson(String persons) {
-        if (persons == null || persons.isEmpty()) {
-            throw new RuntimeException("No signoff persons specified");
-        }
-        return persons.split(",")[0].trim();
     }
 
     private ApprovalRequest cloneRequest(ApprovalRequest request) {
